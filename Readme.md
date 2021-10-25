@@ -1,8 +1,8 @@
-# eat-2-live
+# Smart Nut
 
 Proyecto del curso de Desarrollo de Aplicaciones de #CoderHouse
 
-Eat 2 live es una app mobile para concientizar y fomentar una mejor nutrición.
+Smart Nut es una app mobile para concientizar y fomentar una mejor nutrición.
 Cómo? Te ayudará a encontrar comidas en base a tu dieta, registrar tu alimentación y encontrar oportunidades de mejora.
 
 ## Instalación
@@ -10,7 +10,7 @@ Cómo? Te ayudará a encontrar comidas en base a tu dieta, registrar tu alimenta
 Instalar las dependencias y levantar el servidor
 
 ```sh
-cd eat-2-live
+cd smart-nut
 npm install
 npm start
 ```
