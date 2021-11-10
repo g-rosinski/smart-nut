@@ -1,78 +1,92 @@
-import { Button, FlatList, Keyboard, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Keyboard, Modal, StyleSheet, Text, View } from 'react-native';
+import MealItem, { Meal } from './components/MealItem.component';
 import React, { useState } from 'react';
 
+import ButtonMain from './components/Buttons/ButtonMain.component';
+import ButtonSecondary from './components/Buttons/ButtonSecondary.component';
+import { DailyMealForm } from './components/Header/Forms';
+import Header from './components/Header/Header.component';
 import { StatusBar } from 'expo-status-bar';
 
-type Word = {
-  id:number,
-  value:string
-}
-
 export default function App() {
-  const [newWord, setNewWord] = useState<string>("")
-  const [words, setWords] = useState<Word[]>([])
-  const [wordSelected, setWordSelected] = useState<Word>()
-  const [displayModal, setDisplayModal] = useState<boolean>(false)
+  const [newMeal, setNewMeal] = useState<string>("")
+  const [meals, setMeals] = useState<Meal[]>([])
+  const [mealSelected, setMealSelected] = useState<Meal>()
+  const [mealReady, setMealReady] = useState<Meal[]>([])
+  const [displayModal, setDisplayModal] = useState<string>("")
   
-  const handleOnChangeText = (value:string) => setNewWord(value)
+  const handleOnChangeText = (value:string) => setNewMeal(value)
   const handleOnPressAdd = () => {
-    if(newWord){
-      const word = {
-        value: newWord,
+    if(newMeal){
+      const meal = {
+        name: newMeal,
         id: Math.random()
       }
-      setWords([...words, word])
-      setNewWord("")
+      setMeals([...meals, meal])
+      setNewMeal("")
     }
     Keyboard.dismiss()
   }
 
-  const openRemoveWordModal = (id:number) => {
-    setDisplayModal(true)
-    setWordSelected(words.find(word => word.id == id))
+  const openRemoveMealModal = (id:number) => {
+    setDisplayModal("remove")
+    setMealSelected(meals.find(meal => meal.id == id))
+  }
+  const openReadyMealModal = (id:number) => {
+    setDisplayModal("ready")
+    setMealSelected(meals.find(meal => meal.id == id))
   }
 
   const handleOnPressRemove = (id:number) => {
-    setWords(words.filter(word => word.id !== id))
-    setWordSelected(undefined)
-    setDisplayModal(false)
+    setMeals(meals.filter(meal => meal.id !== id))
+    setMealSelected(undefined)
+    setDisplayModal("")
+  }
+
+  const handleOnPressReady = (id:number) => {
+    const markedMeal = meals.find(meal => meal.id === id)
+    setMealReady(markedMeal? [...mealReady,markedMeal] : mealReady)
+    setMealSelected(undefined)
+    setDisplayModal("")
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <Header>
         <Text style={styles.title_app}>Smart Nut</Text>
-      </View>
-      <Text style={styles.title_coder}>Hola, Coder!</Text>
-      <View>
-        <TextInput onChangeText={ handleOnChangeText } value={newWord}/>
-        <Button title="Add word" onPress={ handleOnPressAdd } />
-      </View>
+      </Header>
+      <DailyMealForm value={ newMeal } onChangeInput={ handleOnChangeText } onPressAdd={ handleOnPressAdd } />
       <FlatList 
-        data={words} 
+        style={styles.list}
+        data={meals} 
         keyExtractor={item => item.id.toString()} 
-        renderItem={({item}: {item: Word}) => (
-          <View key={item.id}>
-            <Text style={styles.title_coder}>{item.value}</Text>
-            <Button title="Remove" onPress={ () => openRemoveWordModal(item.id) } />
-          </View>
-        )} 
+        renderItem={({item}: {item: Meal}) => <MealItem 
+          meal={item} 
+          ready={mealReady.includes(item)}
+          onPressRemove={ openRemoveMealModal } 
+          onPressReady={ openReadyMealModal }
+          />
+        } 
       />
-      {/* <View>
-        {words.map(word => (
-          <View key={word.id}>
-            <Text style={styles.title_coder}>{word.value}</Text>
-          </View>
-        ))}
-      </View> */}
-      <Modal visible={displayModal} animationType="slide">
+      <Modal visible={displayModal==="remove"} animationType="slide">
         <View>
-          <View>
-            <Text style={styles.title_coder}>{`Quiere borrar la palabra ${wordSelected?.value}`}</Text>
+          <View style={styles.modal_body}>
+            <Text style={styles.title_coder}>{`Quiere borrar la comida ' ${mealSelected?.name} ' del dia de hoy ?`}</Text>
           </View>
-          <View>
-            <Button title="Cancel" onPress={ () => setDisplayModal(false) } />
-            <Button title="Confirm" onPress={ () => handleOnPressRemove(wordSelected?.id ? wordSelected.id : 1) } />
+          <View style={styles.group_buttons}>
+            <ButtonSecondary title="Cancelar"  onPress={ () => setDisplayModal("") } />
+            <ButtonMain title="Aceptar" onPress={ () => handleOnPressRemove(mealSelected?.id ? mealSelected.id : 1) } />
+        </View>
+        </View>
+      </Modal>
+      <Modal visible={displayModal==="ready"} animationType="slide">
+        <View>
+          <View style={styles.modal_body}>
+            <Text style={styles.title_coder}>{`Quiere marcar la comida ' ${mealSelected?.name} ' como listo ?`}</Text>
+          </View>
+          <View style={styles.group_buttons}>
+            <ButtonSecondary title="Cancelar"  onPress={ () => setDisplayModal("") } />
+            <ButtonMain title="Aceptar" onPress={ () => handleOnPressReady(mealSelected?.id ? mealSelected.id : 1) } />
         </View>
         </View>
       </Modal>
@@ -89,24 +103,27 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     height: '100%'
   },
-  header: {
-    backgroundColor: '#904b1d', // nut color palette
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-    height: 50,
-    width: '100%'
-  },
   title_app: {
     fontSize: 24,
     fontWeight: '400',
     color: '#fff'
   },
   title_coder: {
-    fontSize: 32,
+    fontSize: 18,
     fontWeight: '700',
-    fontStyle: 'italic',
     alignItems: 'center',
     color: '#38231c'
+  },
+  modal_body: {
+    padding: 15,
+  },
+  group_buttons: {
+    flexDirection: 'row',
+    width: 400,
+    justifyContent: 'space-around',
+  },
+  list:{
+    width: '100%',
+    paddingHorizontal: 15,
   }
 });
