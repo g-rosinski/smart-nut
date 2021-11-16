@@ -1,95 +1,74 @@
-import { FlatList, Keyboard, Modal, StyleSheet, Text, View } from 'react-native';
-import MealItem, { Meal } from './components/MealItem.component';
+import { ExerciseStep, MeasureStep, NutritionalPlanStep, ObjectiveStep } from './screens/GetStarted';
 import React, { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import ButtonMain from './components/Buttons/ButtonMain.component';
-import ButtonSecondary from './components/Buttons/ButtonSecondary.component';
-import { DailyMealForm } from './components/Header/Forms';
+import AppLoading from 'expo-app-loading';
 import Header from './components/Header/Header.component';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+
+export interface Setting{
+  objective?: string,
+  age?: string,
+  height?: string,
+  weight?: string,
+  exercise?: string,
+}
+
+const initialSetting:Setting = {
+  objective: "",
+  age: "",
+  height: "",
+  weight: "",
+  exercise: "",
+}
 
 export default function App() {
-  const [newMeal, setNewMeal] = useState<string>("")
-  const [meals, setMeals] = useState<Meal[]>([])
-  const [mealSelected, setMealSelected] = useState<Meal>()
-  const [mealReady, setMealReady] = useState<Meal[]>([])
-  const [displayModal, setDisplayModal] = useState<string>("")
-  
-  const handleOnChangeText = (value:string) => setNewMeal(value)
-  const handleOnPressAdd = () => {
-    if(newMeal){
-      const meal = {
-        name: newMeal,
-        id: Math.random()
-      }
-      setMeals([...meals, meal])
-      setNewMeal("")
+  const [loaded] = useFonts({
+    RubikRegular: require('./assets/fonts/Rubik/static/Rubik-Regular.ttf'),
+    RubikBold: require('./assets/fonts/Rubik/static/Rubik-Bold.ttf')
+  });
+  const [currentStep, setCurrentStep] = useState<number>(1)
+  const [settings, setSettings] = useState<Setting>(initialSetting)
+
+  if(!loaded) return <AppLoading />
+
+  const handlePressContinue = (values: Setting, e) => {
+    const nextStep = currentStep + 1
+    setSettings({...settings, ...values})
+    if(nextStep <= 4){
+      setCurrentStep(nextStep)
     }
-    Keyboard.dismiss()
   }
 
-  const openRemoveMealModal = (id:number) => {
-    setDisplayModal("remove")
-    setMealSelected(meals.find(meal => meal.id == id))
-  }
-  const openReadyMealModal = (id:number) => {
-    setDisplayModal("ready")
-    setMealSelected(meals.find(meal => meal.id == id))
+  const handlePressBack = () => {
+    const nextStep = currentStep - 1
+    if(nextStep > 0){
+      setCurrentStep(nextStep)
+    }
   }
 
-  const handleOnPressRemove = (id:number) => {
-    setMeals(meals.filter(meal => meal.id !== id))
-    setMealSelected(undefined)
-    setDisplayModal("")
+  const handleRestart = () => {
+    setCurrentStep(1)
+    setSettings(initialSetting)
   }
 
-  const handleOnPressReady = (id:number) => {
-    const markedMeal = meals.find(meal => meal.id === id)
-    setMealReady(markedMeal? [...mealReady,markedMeal] : mealReady)
-    setMealSelected(undefined)
-    setDisplayModal("")
+  const renderCurrentStep = () => {
+    switch(currentStep){
+      case 1: return <ObjectiveStep onPressContinue={handlePressContinue} objective={settings.objective} />; break;
+      case 2: return <MeasureStep onPressContinue={handlePressContinue} onPressBack={handlePressBack} measures={settings} />; break;
+      case 3: return <ExerciseStep onPressContinue={handlePressContinue} onPressBack={handlePressBack} exercise={settings.exercise} />; break;
+      case 4: return <NutritionalPlanStep settings={settings} onPressRestart={handleRestart} />; break;
+    }
   }
+
 
   return (
     <View style={styles.container}>
       <Header>
         <Text style={styles.title_app}>Smart Nut</Text>
       </Header>
-      <DailyMealForm value={ newMeal } onChangeInput={ handleOnChangeText } onPressAdd={ handleOnPressAdd } />
-      <FlatList 
-        style={styles.list}
-        data={meals} 
-        keyExtractor={item => item.id.toString()} 
-        renderItem={({item}: {item: Meal}) => <MealItem 
-          meal={item} 
-          ready={mealReady.includes(item)}
-          onPressRemove={ openRemoveMealModal } 
-          onPressReady={ openReadyMealModal }
-          />
-        } 
-      />
-      <Modal visible={displayModal==="remove"} animationType="slide">
-        <View>
-          <View style={styles.modal_body}>
-            <Text style={styles.title_coder}>{`Quiere borrar la comida ' ${mealSelected?.name} ' del dia de hoy ?`}</Text>
-          </View>
-          <View style={styles.group_buttons}>
-            <ButtonSecondary title="Cancelar"  onPress={ () => setDisplayModal("") } />
-            <ButtonMain title="Aceptar" onPress={ () => handleOnPressRemove(mealSelected?.id ? mealSelected.id : 1) } />
-        </View>
-        </View>
-      </Modal>
-      <Modal visible={displayModal==="ready"} animationType="slide">
-        <View>
-          <View style={styles.modal_body}>
-            <Text style={styles.title_coder}>{`Quiere marcar la comida ' ${mealSelected?.name} ' como listo ?`}</Text>
-          </View>
-          <View style={styles.group_buttons}>
-            <ButtonSecondary title="Cancelar"  onPress={ () => setDisplayModal("") } />
-            <ButtonMain title="Aceptar" onPress={ () => handleOnPressReady(mealSelected?.id ? mealSelected.id : 1) } />
-        </View>
-        </View>
-      </Modal>
+      { renderCurrentStep() }
       <StatusBar style="auto" />
     </View>
   );
@@ -105,25 +84,8 @@ const styles = StyleSheet.create({
   },
   title_app: {
     fontSize: 24,
-    fontWeight: '400',
-    color: '#fff'
-  },
-  title_coder: {
-    fontSize: 18,
     fontWeight: '700',
-    alignItems: 'center',
-    color: '#38231c'
-  },
-  modal_body: {
-    padding: 15,
-  },
-  group_buttons: {
-    flexDirection: 'row',
-    width: 400,
-    justifyContent: 'space-around',
-  },
-  list:{
-    width: '100%',
-    paddingHorizontal: 15,
+    color: '#fff',
+    fontFamily: 'RubikBold'
   }
 });

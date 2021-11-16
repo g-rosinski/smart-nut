@@ -7,8 +7,8 @@ interface ButtonMainProps extends ButtonProps{
     loading?: boolean,
 }
 
-const ButtonMain: React.FC<ButtonMainProps> = ({title, loading, ...props}) => (
-    <TouchableOpacity style={styles.button} {...props}>
+const ButtonMain: React.FC<ButtonMainProps> = ({title, loading, disabled, ...props}) => (
+    <TouchableOpacity style={[styles.button, disabled? styles.disabled : null]} disabled={disabled} {...props}>
         <Text style={styles.buttonText}>
             { title }
         </Text>
@@ -28,6 +28,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         height: 40
     },
+    disabled: {
+        opacity: 0.8,
+    },
     buttonText: {
         color: theme.button.color.main,
         fontSize: 14,
@@ -35,7 +38,8 @@ const styles = StyleSheet.create({
 })
 
 ButtonMain.defaultProps = {
-    title: 'Aceptar'
+    title: 'Aceptar',
+    disabled: false
 }
 
 export default ButtonMain
