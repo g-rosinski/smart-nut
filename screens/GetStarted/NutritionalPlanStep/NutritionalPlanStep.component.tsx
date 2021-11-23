@@ -1,16 +1,17 @@
-import { ButtonMain, ButtonMark, ButtonSecondary, GroupButtons } from '../../../components/Buttons'
+import { ButtonMain, ButtonSecondary, GroupButtons } from '../../../components/Buttons'
 import { NativeSyntheticEvent, NativeTouchEvent, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
 
 import Label from '../../../components/Label.component'
-import { Setting } from '../../../App'
+import React from 'react'
+import { Setting } from '../GetStarted.component'
 
 interface NutritionalPlanStepProps{
     settings: Setting,
     onPressRestart(event: NativeSyntheticEvent<NativeTouchEvent>): void,
+    onPressConfirm(event: NativeSyntheticEvent<NativeTouchEvent>): void,
 }
 
-const NutritionalPlanStep: React.FC<NutritionalPlanStepProps> = ({settings, onPressRestart}) => {
+const NutritionalPlanStep: React.FC<NutritionalPlanStepProps> = ({settings, onPressRestart, onPressConfirm}) => {
 
     const translation = (key:string|undefined):string => {
         if(!key) return ""
@@ -41,6 +42,7 @@ const NutritionalPlanStep: React.FC<NutritionalPlanStepProps> = ({settings, onPr
             <Text style={styles.description}>En caso que quieras comenzar de vuelta puedes reiniciar</Text>
             <GroupButtons>
                 <ButtonSecondary title="Reiniciar" onPress={onPressRestart} />
+                <ButtonMain title="Confirmar" onPress={onPressConfirm} />
             </GroupButtons>
         </View>
     )
