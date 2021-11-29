@@ -1,32 +1,28 @@
-import { ButtonMain, ButtonMark, GroupButtons } from '../../../components/Buttons'
-import { NativeSyntheticEvent, NativeTouchEvent, StyleSheet, Text, View } from 'react-native'
+import { ButtonMain, ButtonMark } from '../../components/Buttons'
 import React, { useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
-import { Setting } from '../GetStarted.component'
-
-interface ObjectiveStepProps{
-    onPressContinue(values: Setting, event: NativeSyntheticEvent<NativeTouchEvent>): void,
-    objective?: string
+interface ObjectiveProps{
+    objective?: string,
+    navigation: any,
+    route: any,
 }
 
-const ObjectiveStep: React.FC<ObjectiveStepProps> = ({onPressContinue, objective}) => {
-    const [option, setOption] = useState<string>(objective || "")
+const Objective: React.FC<ObjectiveProps> = ({navigation, objective, route}) => {
+    const [option, setOption] = useState<string>(route.params.objective || objective || "")
 
     const handleOnPressObjective = (option: string) => {
         setOption(option)
     }
     return (
         <View style={styles.stepContainer}>
-            <Text style={styles.title}>Objetivo</Text>
             <Text style={styles.description}>Seleccione un objetivo deseable</Text>
             <View style={styles.formContainer}>
                 <ButtonMark title="Perder peso" check={option === "lost_weight"} onPress={() => handleOnPressObjective("lost_weight")} />
                 <ButtonMark title="Mantener peso" check={option === "keep_weight"} onPress={() => handleOnPressObjective("keep_weight")} />
                 <ButtonMark title="Ganar peso" check={option === "gain_weight"} onPress={() => handleOnPressObjective("gain_weight")} />
             </View>
-            <GroupButtons>
-                <ButtonMain title="Continuar" onPress={e => onPressContinue({objective: option}, e)} disabled={!option} />
-            </GroupButtons>
+            <ButtonMain title="Guardar cambios" onPress={e => navigation.navigate("Settings",{objective: option})} disabled={!option} />
         </View>
     )
 }
@@ -56,4 +52,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default ObjectiveStep
+export default Objective

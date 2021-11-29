@@ -1,19 +1,15 @@
 import { StyleSheet, View } from 'react-native';
 
+import { ButtonMain } from '../../components/Buttons';
 import React from 'react';
-import { Text } from 'react-native'
 
-export interface DailyProps{
-}
-
-
-
-const Daily: React.FC<DailyProps> = () => {
+const Daily: React.FC<any> = ({navigation}) => {
 
 
   return (
     <View style={styles.container}>
-        <Text style={styles.title}>Daily</Text>
+      <ButtonMain title={"Ingresar peso"} onPress={() => navigation.navigate("")} />
+      <ButtonMain title={"Ingresar comida"} onPress={() => navigation.navigate("")} />
     </View>
   );
 }
