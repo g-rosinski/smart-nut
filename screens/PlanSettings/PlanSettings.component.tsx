@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { ButtonMain } from '../../components/Buttons';
+import { EditableSection } from '../../components/Containers';
 import Label from '../../components/Label.component';
 import React from 'react';
 
@@ -32,23 +33,17 @@ const PlanSettings: React.FC<any> = ({navigation, route}) => {
       
     return (
     <View style={styles.container}>
-        <View style={styles.reportContainer}>
+        <EditableSection onPressEdit={() => navigation.navigate("Objetive", settings)}>
             <Label text={`Objetivo: ${translation(settings.objective)}`} />
-
-            <ButtonMain title={"Editar tu objetivo"} onPress={() => navigation.navigate("Objetive", settings)} />
-        </View>
-        <View style={styles.reportContainer}>
+        </EditableSection>
+        <EditableSection onPressEdit={() => navigation.navigate("Measure", settings)}>
             <Label text={`Edad: ` + (settings.age.length? `${settings.age} años` : "-")} />
             <Label text={`Peso: ` + (settings.weight.length? `${settings.weight} kg` : "-")} />
             <Label text={`Altura: ` + (settings.height.length? ` ${settings.height} cm` : "-")} />
-            
-            <ButtonMain title={"Editar tus medidas"} onPress={() => navigation.navigate("Measure", settings)} />
-        </View>
-        <View style={styles.reportContainer}>
+        </EditableSection>
+        <EditableSection onPressEdit={() => navigation.navigate("Exercise", settings)}>
             <Label text={`Actividad fisica: ${translation(settings.exercise)}`} />
-            
-            <ButtonMain title={"Editar tu actividad"} onPress={() => navigation.navigate("Exercise", settings)} />
-        </View>
+        </EditableSection>
     </View>
     );
 }
@@ -60,11 +55,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'column',
     height: '100%'
-  },
-  reportContainer: {
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    width: "100%"
   },
   title: {
     fontSize: 20,
