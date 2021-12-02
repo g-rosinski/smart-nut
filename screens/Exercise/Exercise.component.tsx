@@ -1,19 +1,28 @@
 import { ButtonMain, ButtonMark, GroupButtons } from '../../components/Buttons'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux';
+
+import { updateExercise } from '../../store/actions/settings/settins.actions';
 
 interface ExerciseProps{
-    exercise?: string,
     navigation: any,
-    route: any,
 }
 
-const Exercise: React.FC<ExerciseProps> = ({ exercise, navigation, route}) => {
-    const [option, setOption] = useState<string>(route.params.exercise || "")
+const Exercise: React.FC<ExerciseProps> = ({ navigation}) => {
+    const dispatch = useDispatch();
+    const exercise = useSelector(state => state?.settings?.exercise);
+    const [option, setOption] = useState<string>(exercise || "")
 
-    const handleOnPressOption = (option: string) => {
-        setOption(option)
+    const handleOnPressOption = (optionSelected: string) => {
+        setOption(optionSelected)
     }
+
+    const handleOnPressSave = () => {
+        dispatch(updateExercise(option))
+        navigation.navigate("Settings")
+    }
+
     return (
         <View style={styles.stepContainer}>
             <Text style={styles.description}>Realizas actividad fisica? Cuantas veces a la semana?</Text>
@@ -24,7 +33,7 @@ const Exercise: React.FC<ExerciseProps> = ({ exercise, navigation, route}) => {
                     <ButtonMark title="5 a 7 veces por semana" check={option === "atlethic"} onPress={() => handleOnPressOption("atlethic")} />
                 </View>
             <GroupButtons>
-                <ButtonMain title="Guardar cambios" onPress={e => navigation.navigate("Settings",{exercise: option})} disabled={!option} />
+                <ButtonMain title="Guardar cambios" onPress={ handleOnPressSave } disabled={!option} />
             </GroupButtons>
         </View>
     )

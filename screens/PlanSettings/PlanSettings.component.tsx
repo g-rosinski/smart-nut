@@ -1,9 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
-import { ButtonMain } from '../../components/Buttons';
 import { EditableSection } from '../../components/Containers';
 import Label from '../../components/Label.component';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 const translation = (key:string|undefined):string => {
     if(!key) return "-"
@@ -21,31 +21,24 @@ const translation = (key:string|undefined):string => {
 }
 
 const PlanSettings: React.FC<any> = ({navigation, route}) => {
-    
-    const settings= {
-        objective: "",
-        age: "",
-        height: "",
-        weight: "",
-        exercise: "",
-        ...route.params
-    }
+
+  const settings = useSelector(state => state?.settings);
       
-    return (
+  return (
     <View style={styles.container}>
-        <EditableSection onPressEdit={() => navigation.navigate("Objetive", settings)}>
+        <EditableSection onPressEdit={() => navigation.navigate("Objetive")}>
             <Label text={`Objetivo: ${translation(settings.objective)}`} />
         </EditableSection>
-        <EditableSection onPressEdit={() => navigation.navigate("Measure", settings)}>
+        <EditableSection onPressEdit={() => navigation.navigate("Measure")}>
             <Label text={`Edad: ` + (settings.age.length? `${settings.age} años` : "-")} />
             <Label text={`Peso: ` + (settings.weight.length? `${settings.weight} kg` : "-")} />
             <Label text={`Altura: ` + (settings.height.length? ` ${settings.height} cm` : "-")} />
         </EditableSection>
-        <EditableSection onPressEdit={() => navigation.navigate("Exercise", settings)}>
+        <EditableSection onPressEdit={() => navigation.navigate("Exercise")}>
             <Label text={`Actividad fisica: ${translation(settings.exercise)}`} />
         </EditableSection>
     </View>
-    );
+  );
 }
 
 const styles = StyleSheet.create({

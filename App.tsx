@@ -1,7 +1,9 @@
 import AppLoading from 'expo-app-loading';
 import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
 import React from 'react';
 import TabNavigator from './navigation/TabNavigator';
+import store from './store';
 import { useFonts } from 'expo-font';
 
 export default function App() {
@@ -12,9 +14,11 @@ export default function App() {
 
   return (
     loaded ? 
-      <NavigationContainer>
-        <TabNavigator />
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <TabNavigator />
+        </NavigationContainer>
+      </Provider>
       : 
       <AppLoading />
   );
