@@ -1,8 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
-import { ButtonMain } from '../../components/Buttons';
+import { EditableSection } from '../../components/Containers';
 import Label from '../../components/Label.component';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 const translation = (key:string|undefined):string => {
     if(!key) return "-"
@@ -20,37 +21,24 @@ const translation = (key:string|undefined):string => {
 }
 
 const PlanSettings: React.FC<any> = ({navigation, route}) => {
-    
-    const settings= {
-        objective: "",
-        age: "",
-        height: "",
-        weight: "",
-        exercise: "",
-        ...route.params
-    }
-      
-    return (
-    <View style={styles.container}>
-        <View style={styles.reportContainer}>
-            <Label text={`Objetivo: ${translation(settings.objective)}`} />
 
-            <ButtonMain title={"Editar tu objetivo"} onPress={() => navigation.navigate("Objetive", settings)} />
-        </View>
-        <View style={styles.reportContainer}>
+  const settings = useSelector(state => state?.settings);
+      
+  return (
+    <View style={styles.container}>
+        <EditableSection onPressEdit={() => navigation.navigate("Objetive")}>
+            <Label text={`Objetivo: ${translation(settings.objective)}`} />
+        </EditableSection>
+        <EditableSection onPressEdit={() => navigation.navigate("Measure")}>
             <Label text={`Edad: ` + (settings.age.length? `${settings.age} años` : "-")} />
             <Label text={`Peso: ` + (settings.weight.length? `${settings.weight} kg` : "-")} />
             <Label text={`Altura: ` + (settings.height.length? ` ${settings.height} cm` : "-")} />
-            
-            <ButtonMain title={"Editar tus medidas"} onPress={() => navigation.navigate("Measure", settings)} />
-        </View>
-        <View style={styles.reportContainer}>
+        </EditableSection>
+        <EditableSection onPressEdit={() => navigation.navigate("Exercise")}>
             <Label text={`Actividad fisica: ${translation(settings.exercise)}`} />
-            
-            <ButtonMain title={"Editar tu actividad"} onPress={() => navigation.navigate("Exercise", settings)} />
-        </View>
+        </EditableSection>
     </View>
-    );
+  );
 }
 
 const styles = StyleSheet.create({
@@ -60,11 +48,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'column',
     height: '100%'
-  },
-  reportContainer: {
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    width: "100%"
   },
   title: {
     fontSize: 20,

@@ -1,19 +1,29 @@
 import { ButtonMain, ButtonMark } from '../../components/Buttons'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux';
+
+import { updateObjective } from '../../store/actions/settings/settins.actions';
 
 interface ObjectiveProps{
-    objective?: string,
     navigation: any,
     route: any,
 }
 
-const Objective: React.FC<ObjectiveProps> = ({navigation, objective, route}) => {
-    const [option, setOption] = useState<string>(route.params.objective || objective || "")
+const Objective: React.FC<ObjectiveProps> = ({navigation, route}) => {
+    const dispatch = useDispatch();
+    const objective = useSelector(state => state?.settings?.objective);
+    const [option, setOption] = useState<string>(objective || "")
 
-    const handleOnPressObjective = (option: string) => {
-        setOption(option)
+    const handleOnPressObjective = (optionSelected: string) => {
+        setOption(optionSelected)
     }
+    
+    const handleOnPressSave = () => {
+        dispatch(updateObjective(option))
+        navigation.navigate("Settings")
+    }
+    
     return (
         <View style={styles.stepContainer}>
             <Text style={styles.description}>Seleccione un objetivo deseable</Text>
@@ -22,7 +32,7 @@ const Objective: React.FC<ObjectiveProps> = ({navigation, objective, route}) => 
                 <ButtonMark title="Mantener peso" check={option === "keep_weight"} onPress={() => handleOnPressObjective("keep_weight")} />
                 <ButtonMark title="Ganar peso" check={option === "gain_weight"} onPress={() => handleOnPressObjective("gain_weight")} />
             </View>
-            <ButtonMain title="Guardar cambios" onPress={e => navigation.navigate("Settings",{objective: option})} disabled={!option} />
+            <ButtonMain title="Guardar cambios" onPress={ handleOnPressSave } disabled={!option} />
         </View>
     )
 }

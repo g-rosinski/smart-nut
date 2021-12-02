@@ -1,23 +1,29 @@
 import { ButtonMain, GroupButtons } from '../../components/Buttons'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Input from '../../components/Input.component'
 import InputGroup from '../../components/InputGroup.component'
 import Label from '../../components/Label.component'
-import { Setting } from '../GetStarted/GetStarted.component'
+import { updateMeasures } from '../../store/actions/settings/settins.actions'
 
 interface MeasureProps{
-    measures?: Setting,
     navigation: any,
-    route: any,
 }
 
 
-const Measure: React.FC<MeasureProps> = ({ measures, navigation, route}) => {
-    const [height, setHeight] = useState<string>(route.params.height || "")
-    const [weight, setWeight] = useState<string>(route.params.weight || "")
-    const [age, setAge] = useState<string>(route.params.age || "")
+const Measure: React.FC<MeasureProps> = ({ navigation}) => {
+    const dispatch = useDispatch();
+    const settings = useSelector(state => state?.settings);
+    const [height, setHeight] = useState<string>(settings.height || "")
+    const [weight, setWeight] = useState<string>(settings.weight || "")
+    const [age, setAge] = useState<string>(settings.age || "")
+
+    const handleOnPressSave = () => {
+        dispatch(updateMeasures({age: age, weight: weight, height: height}))
+        navigation.navigate("Settings")
+    }
 
     return (
         <View style={styles.stepContainer}>
@@ -38,7 +44,7 @@ const Measure: React.FC<MeasureProps> = ({ measures, navigation, route}) => {
             </View>
             <GroupButtons>
                 <ButtonMain title="Guardar cambios"
-                    onPress={e => navigation.navigate("Settings",{age: age, weight: weight, height: height})} 
+                    onPress={handleOnPressSave} 
                     disabled={!Boolean(age?.length) || !Boolean(height?.length) || !Boolean(weight?.length)} 
                 />
             </GroupButtons>
