@@ -1,9 +1,8 @@
 import { ButtonMain, ButtonMark, GroupButtons } from '../../components/Buttons'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { refreshSetting, updateExercise } from '../../store/actions/settings/settins.actions';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { updateExercise } from '../../store/actions/settings/settins.actions';
 
 interface ExerciseProps{
     navigation: any,
@@ -11,8 +10,8 @@ interface ExerciseProps{
 
 const Exercise: React.FC<ExerciseProps> = ({ navigation}) => {
     const dispatch = useDispatch();
-    const exercise = useSelector(state => state?.settings?.exercise);
-    const [option, setOption] = useState<string>(exercise || "")
+    const settings = useSelector(state => state?.settings);
+    const [option, setOption] = useState<string>(settings.exercise || "")
 
     const handleOnPressOption = (optionSelected: string) => {
         setOption(optionSelected)
@@ -20,6 +19,7 @@ const Exercise: React.FC<ExerciseProps> = ({ navigation}) => {
 
     const handleOnPressSave = () => {
         dispatch(updateExercise(option))
+        dispatch(refreshSetting(settings.id, {...settings, exercise: option}))
         navigation.navigate("Settings")
     }
 

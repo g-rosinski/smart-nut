@@ -1,33 +1,26 @@
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { fetchSetting, newSetting, refreshSetting } from '../../store/actions/settings/settins.actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { EditableSection } from '../../components/Containers';
 import Label from '../../components/Label.component';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import translate from '../../utils/translate';
 
-const translation = (key:string|undefined):string => {
-    if(!key) return "-"
-
-    const translate = {
-        none: "Sedentario",
-        twice: "2 veces por semana",
-        sport: "Mas de 2 veces por semana",
-        atlethic: "5 a 7 veces por semana",
-        lost_weight: "Perder peso",
-        keep_weight: "Mantener peso",
-        gain_weight: "Ganar peso",
-    }
-    return translate[key];
-}
-
-const PlanSettings: React.FC<any> = ({navigation, route}) => {
-
+const PlanSettings: React.FC<any> = ({navigation}) => {
+  const dispatch = useDispatch();
   const settings = useSelector(state => state?.settings);
+  useEffect(() => {
+    dispatch(fetchSetting());
+    if(!settings.id){
+      dispatch(newSetting({}))
+    }
+}, []);
       
   return (
     <View style={styles.container}>
         <EditableSection onPressEdit={() => navigation.navigate("Objetive")}>
-            <Label text={`Objetivo: ${translation(settings.objective)}`} />
+            <Label text={`Objetivo: ${translate(settings.objective)}`} />
         </EditableSection>
         <EditableSection onPressEdit={() => navigation.navigate("Measure")}>
             <Label text={`Edad: ` + (settings.age.length? `${settings.age} años` : "-")} />
@@ -35,7 +28,7 @@ const PlanSettings: React.FC<any> = ({navigation, route}) => {
             <Label text={`Altura: ` + (settings.height.length? ` ${settings.height} cm` : "-")} />
         </EditableSection>
         <EditableSection onPressEdit={() => navigation.navigate("Exercise")}>
-            <Label text={`Actividad fisica: ${translation(settings.exercise)}`} />
+            <Label text={`Actividad fisica: ${translate(settings.exercise)}`} />
         </EditableSection>
     </View>
   );

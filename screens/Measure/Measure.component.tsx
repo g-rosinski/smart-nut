@@ -1,12 +1,12 @@
 import { ButtonMain, GroupButtons } from '../../components/Buttons'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { refreshSetting, updateMeasures } from '../../store/actions/settings/settins.actions'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Input from '../../components/Input.component'
 import InputGroup from '../../components/InputGroup.component'
 import Label from '../../components/Label.component'
-import { updateMeasures } from '../../store/actions/settings/settins.actions'
 
 interface MeasureProps{
     navigation: any,
@@ -22,6 +22,7 @@ const Measure: React.FC<MeasureProps> = ({ navigation}) => {
 
     const handleOnPressSave = () => {
         dispatch(updateMeasures({age: age, weight: weight, height: height}))
+        dispatch(refreshSetting(settings.id, {...settings, age: age, weight: weight, height: height}))
         navigation.navigate("Settings")
     }
 

@@ -1,19 +1,17 @@
 import { ButtonMain, ButtonMark } from '../../components/Buttons'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { refreshSetting, updateObjective } from '../../store/actions/settings/settins.actions';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { updateObjective } from '../../store/actions/settings/settins.actions';
 
 interface ObjectiveProps{
     navigation: any,
-    route: any,
 }
 
-const Objective: React.FC<ObjectiveProps> = ({navigation, route}) => {
+const Objective: React.FC<ObjectiveProps> = ({navigation}) => {
     const dispatch = useDispatch();
-    const objective = useSelector(state => state?.settings?.objective);
-    const [option, setOption] = useState<string>(objective || "")
+    const settings = useSelector(state => state?.settings);
+    const [option, setOption] = useState<string>(settings.objective || "")
 
     const handleOnPressObjective = (optionSelected: string) => {
         setOption(optionSelected)
@@ -21,6 +19,7 @@ const Objective: React.FC<ObjectiveProps> = ({navigation, route}) => {
     
     const handleOnPressSave = () => {
         dispatch(updateObjective(option))
+        dispatch(refreshSetting(settings.id, {...settings, objective: option}))
         navigation.navigate("Settings")
     }
     
