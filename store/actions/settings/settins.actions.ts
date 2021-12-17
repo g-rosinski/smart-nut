@@ -38,7 +38,6 @@ export const setSettings = (settings: any): ActionProps => ({
 export const fetchSetting = () => {
     return async dispatch => {
         const settings = await fetchSettings()
-        console.log("fetchSetting", settings?.rows?._array[0])
         const setting:SettingsState = {
             id: undefined,
             age: "0",
@@ -75,14 +74,12 @@ export const newSetting = (settings: any) => {
 
 export const refreshSetting = (id:number, settings: any) => {
     return async dispatch => {
-        const settingsUpdated = await updateSettings(id, {
+        await updateSettings(id, {
             age: settings.age? Number(settings.age) : 0,
             height: settings.height? Number(settings.height) : 0, 
             weight: settings.weight? Number(settings.weight) : 0, 
             objective: settings.objective? settings.objective : "", 
             exercise: settings.exercise? settings.exercise : ""
         })
-        console.log({settingsUpdated:settingsUpdated})
-        // dispatch(setSettings(settingsUpdated?.rows?.length? settingsUpdated?.rows?._array[0] : {}))
     }
 }
