@@ -1,0 +1,9 @@
+{
+    "none": "Sedentario",
+    "twice": "2 veces por semana",
+    "sport": "Mas de 2 veces por semana",
+    "atlethic": "5 a 7 veces por semana",
+    "lost_weight": "Perder peso",
+    "keep_weight": "Mantener peso",
+    "gain_weight": "Ganar peso"
+}

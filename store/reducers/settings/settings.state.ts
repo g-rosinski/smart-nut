@@ -1,4 +1,5 @@
 export interface SettingsState{
+    id: number | undefined,
     objective: string,
     age: string,
     height: string,
@@ -6,6 +7,7 @@ export interface SettingsState{
     exercise: string,
 }
 export const settingsInitialState:SettingsState = {
+    id: undefined,
     objective: "",
     age: "",
     height: "",

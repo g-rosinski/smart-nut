@@ -1,5 +1,6 @@
 import { UPDATE_EXERCISE, UPDATE_MEASURES, UPDATE_OBJECTIVE } from "../../actions/settings/settins.actions"
 
+import { SET_SETTINGS } from './../../actions/settings/settins.actions';
 import { SettingsState } from "./settings.state"
 
 export interface ActionProps{
@@ -19,6 +20,11 @@ const SettingsReducer = (initialState: SettingsState) => (state = initialState, 
             return {
                 ...state,
                 ...action.payload.measures
+            }
+        case SET_SETTINGS:
+            return {
+                ...state,
+                ...action.payload
             }
         default:
             return state
