@@ -1,5 +1,7 @@
+import { ID } from "../../../types";
+
 export interface SettingsState{
-    id: number | undefined,
+    id: ID | undefined,
     objective: string,
     age: string,
     height: string,

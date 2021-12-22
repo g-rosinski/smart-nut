@@ -1,5 +1,7 @@
 import * as SQLite from 'expo-sqlite'
 
+import { ID } from '../types'
+
 const db = SQLite.openDatabase('smart-nut.db')
 
 export const init = () => {
@@ -7,7 +9,7 @@ export const init = () => {
         db.transaction(tx => {
             tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS settings (
-                    id INTEGER PRIMARY KEY NOT NULL,
+                    id VARCHAR(24) PRIMARY KEY NOT NULL,
                     age INTEGER NOT NULL,
                     height INTEGER NOT NULL,
                     weight INTEGER NOT NULL,
@@ -23,7 +25,7 @@ export const init = () => {
 }
 
 type settingModel = {
-    id?: number,
+    id: ID,
     age: number,
     height: number,
     weight: number,
@@ -31,13 +33,13 @@ type settingModel = {
     exercise: string,
 }
 
-export const insertSettings = ({age, height, weight, objective, exercise}:settingModel) => {
+export const insertSettings = ({id, age, height, weight, objective, exercise}:settingModel) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
-            `INSERT INTO settings (age, height, weight, objective, exercise)
-                VALUES (?, ?, ?, ?, ?)`,
-            [age, height, weight, objective, exercise],
+            `INSERT INTO settings (id, age, height, weight, objective, exercise)
+                VALUES (?, ?, ?, ?, ?, ?)`,
+            [id, age, height, weight, objective, exercise],
             (_, result) => resolve(result),
             (_, err) => reject(err),
             )
@@ -58,7 +60,7 @@ export const fetchSettings = () => {
     })
 }
 
-export const updateSettings = (id:number, {age, height, weight, objective, exercise}:settingModel) => {
+export const updateSettings = ({id, age, height, weight, objective, exercise}:settingModel) => {
     return new Promise((resolve, reject) => {
         db.transaction(tx => {
             tx.executeSql(
