@@ -1,16 +1,20 @@
 import * as ImagePicker from 'expo-image-picker';
 
 import { Alert, Button, Image, StyleSheet, Text, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import colors from '../contants/colors';
 
 interface ImageSelectorProps{
     onSelectImage?(uri:string | undefined):void
+    imageUrl?: string
 }
 
-const ImageSelector:React.FC<ImageSelectorProps> = ({onSelectImage}) => {
-  const [pickedUri, setPickedUri] = useState("");
+const ImageSelector:React.FC<ImageSelectorProps> = ({onSelectImage, imageUrl}) => {
+  const [pickedUri, setPickedUri] = useState(imageUrl || "");
+  useEffect(() => {
+    setPickedUri(imageUrl || "")
+  }, [imageUrl]);
 
   const verifyPermissions = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -37,11 +41,10 @@ const ImageSelector:React.FC<ImageSelectorProps> = ({onSelectImage}) => {
       quality: 0.8,
     });
 
-    console.log(image)
     setPickedUri(image.uri? image.uri : "");
     onSelectImage(image.uri? image.uri : "");
   };
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.preview}>

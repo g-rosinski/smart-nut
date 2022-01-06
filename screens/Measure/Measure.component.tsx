@@ -15,14 +15,14 @@ interface MeasureProps{
 
 const Measure: React.FC<MeasureProps> = ({ navigation}) => {
     const dispatch = useDispatch();
-    const settings = useSelector(state => state?.settings);
-    const [height, setHeight] = useState<string>(settings.height || "")
-    const [weight, setWeight] = useState<string>(settings.weight || "")
-    const [age, setAge] = useState<string>(settings.age || "")
+    const { settings } = useSelector(state => state);
+    const [height, setHeight] = useState<string>(String(settings.height) || "")
+    const [weight, setWeight] = useState<string>(String(settings.weight) || "")
+    const [age, setAge] = useState<string>(String(settings.age) || "")
 
     const handleOnPressSave = () => {
         dispatch(updateMeasures({age: age, weight: weight, height: height}))
-        dispatch(refreshSetting(settings.id, {...settings, age: age, weight: weight, height: height}))
+        dispatch(refreshSetting(settings.id, {age: Number(age), weight: Number(weight), height: Number(height)}))
         navigation.navigate("Settings")
     }
 
@@ -32,14 +32,14 @@ const Measure: React.FC<MeasureProps> = ({ navigation}) => {
             <View style={styles.formContainer}>
                 <InputGroup>
                     <Label text="Edad" />
-                    <Input value={age} onChangeText={ setAge } keyboardType='numeric' />
+                    <Input value={age} onChangeText={ setAge } keyboardType='number-pad' />
                 </InputGroup>
                 <InputGroup>
-                    <Label text="Altura" />
-                    <Input value={height} onChangeText={ setHeight } keyboardType='decimal-pad' />
+                    <Label text="Altura (cm)" />
+                    <Input value={height} onChangeText={ setHeight } keyboardType='number-pad' />
                 </InputGroup>
                 <InputGroup>
-                    <Label text="Peso" />
+                    <Label text="Peso (kg)" />
                     <Input value={weight} onChangeText={ setWeight } keyboardType='decimal-pad' />
                 </InputGroup>
             </View>

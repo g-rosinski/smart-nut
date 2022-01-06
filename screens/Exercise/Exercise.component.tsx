@@ -10,7 +10,7 @@ interface ExerciseProps{
 
 const Exercise: React.FC<ExerciseProps> = ({ navigation}) => {
     const dispatch = useDispatch();
-    const settings = useSelector(state => state?.settings);
+    const { settings } = useSelector(state => state);
     const [option, setOption] = useState<string>(settings.exercise || "")
 
     const handleOnPressOption = (optionSelected: string) => {
@@ -19,7 +19,7 @@ const Exercise: React.FC<ExerciseProps> = ({ navigation}) => {
 
     const handleOnPressSave = () => {
         dispatch(updateExercise(option))
-        dispatch(refreshSetting(settings.id, {...settings, exercise: option}))
+        dispatch(refreshSetting(settings.id, {exercise: option}))
         navigation.navigate("Settings")
     }
 
@@ -27,10 +27,11 @@ const Exercise: React.FC<ExerciseProps> = ({ navigation}) => {
         <View style={styles.stepContainer}>
             <Text style={styles.description}>Realizas actividad fisica? Cuantas veces a la semana?</Text>
             <View style={styles.formContainer}>
-                    <ButtonMark title="Sedentario" check={option === "none"} onPress={() => handleOnPressOption("none")} />
-                    <ButtonMark title="2 veces por semana" check={option === "twice"} onPress={() => handleOnPressOption("twice")} />
-                    <ButtonMark title="Mas de 2 veces por semana" check={option === "sport"} onPress={() => handleOnPressOption("sport")} />
-                    <ButtonMark title="5 a 7 veces por semana" check={option === "atlethic"} onPress={() => handleOnPressOption("atlethic")} />
+                    <ButtonMark title="Sedentario" check={option === "sendetary"} onPress={() => handleOnPressOption("sendetary")} />
+                    <ButtonMark title="2 veces por semana" check={option === "low_exercise"} onPress={() => handleOnPressOption("low_exercise")} />
+                    <ButtonMark title="3 a 4 veces por semana" check={option === "medium_exercise"} onPress={() => handleOnPressOption("medium_exercise")} />
+                    <ButtonMark title="5 a 6 veces por semana" check={option === "highly_exercise"} onPress={() => handleOnPressOption("highly_exercise")} />
+                    <ButtonMark title="Todos los días" check={option === "vigorous_exercise"} onPress={() => handleOnPressOption("vigorous_exercise")} />
                 </View>
             <GroupButtons>
                 <ButtonMain title="Guardar cambios" onPress={ handleOnPressSave } disabled={!option} />

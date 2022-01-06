@@ -1,6 +1,7 @@
 import * as SQLite from 'expo-sqlite'
 
 import { ID } from '../types'
+import { SettingsModel } from '../types/models'
 
 const db = SQLite.openDatabase('smart-nut.db')
 
@@ -10,6 +11,8 @@ export const init = () => {
             tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS settings (
                     id VARCHAR(24) PRIMARY KEY NOT NULL,
+                    created_at INTEGER NOT NULL,
+                    updated_at INTEGER NOT NULL,
                     age INTEGER NOT NULL,
                     height INTEGER NOT NULL,
                     weight INTEGER NOT NULL,
@@ -24,22 +27,14 @@ export const init = () => {
     })
 }
 
-type settingModel = {
-    id: ID,
-    age: number,
-    height: number,
-    weight: number,
-    objective: string,
-    exercise: string,
-}
-
-export const insertSettings = ({id, age, height, weight, objective, exercise}:settingModel) => {
+export const insertSettings = (id: ID,settings:SettingsModel) => {
     return new Promise((resolve, reject) => {
+        const { created_at, updated_at, age, height, weight, objective, exercise} = settings
         db.transaction(tx => {
             tx.executeSql(
-            `INSERT INTO settings (id, age, height, weight, objective, exercise)
-                VALUES (?, ?, ?, ?, ?, ?)`,
-            [id, age, height, weight, objective, exercise],
+            `INSERT INTO settings (id, created_at, updated_at, age, height, weight, objective, exercise)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, created_at? created_at : Date.now(), updated_at, String(age), String(height), String(weight), objective, exercise],
             (_, result) => resolve(result),
             (_, err) => reject(err),
             )
@@ -60,15 +55,33 @@ export const fetchSettings = () => {
     })
 }
 
-export const updateSettings = ({id, age, height, weight, objective, exercise}:settingModel) => {
+export const updateSettings = (id: ID, settings:SettingsModel) => {
     return new Promise((resolve, reject) => {
+        const { updated_at, age, height, weight, objective, exercise} = settings
         db.transaction(tx => {
             tx.executeSql(
-            `UPDATE settings SET age=?, height=?, weight=?, objective=?, exercise=? WHERE id=?`,
-            [age, height, weight, objective, exercise, id],
+            `UPDATE settings SET updated_at=?, age=?, height=?, weight=?, objective=?, exercise=? WHERE id=?`,
+            [updated_at, age, height, weight, objective, exercise, id],
             (_, result) => resolve(result),
             (_, err) => reject(err),
             )
         })
+    })
+}
+
+export const patchSettings = (id:ID, settings:Partial<SettingsModel>) => {
+    return new Promise((resolve, reject) => {
+        if(Object.keys(settings).length){
+            let query = "UPDATE settings SET " + Object.keys(settings).join("=?, ") + "=? WHERE id=?"
+            let values:any = Object.values(settings).concat(id).map(value => String(value))
+            db.transaction(tx => {
+                tx.executeSql(
+                    query,
+                    values,
+                    (_, result) => resolve(result),
+                    (_, err) => reject(err),
+                )
+            })
+        }
     })
 }

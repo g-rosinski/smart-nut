@@ -1,9 +1,16 @@
 {
-    "none": "Sedentario",
-    "twice": "2 veces por semana",
-    "sport": "Mas de 2 veces por semana",
-    "atlethic": "5 a 7 veces por semana",
+    "sendetary": "Sedentario",
+    "low_exercise": "2 veces por semana",
+    "medium_exercise": "3-4 veces por semana",
+    "highly_exercise": "5-6 veces por semana",
+    "vigorous_exercise": "Todos los días",
     "lost_weight": "Perder peso",
     "keep_weight": "Mantener peso",
-    "gain_weight": "Ganar peso"
+    "Monday": "Lunes",
+    "Tuesday": "Martes",
+    "Wednesday": "Miércoles",
+    "Thursday": "Jueves",
+    "Friday": "Viernes",
+    "Saturday": "Sábado",
+    "Sunday": "Domingo"
 }
