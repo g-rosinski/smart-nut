@@ -10,7 +10,7 @@ interface ObjectiveProps{
 
 const Objective: React.FC<ObjectiveProps> = ({navigation}) => {
     const dispatch = useDispatch();
-    const settings = useSelector(state => state?.settings);
+    const { settings } = useSelector(state => state);
     const [option, setOption] = useState<string>(settings.objective || "")
 
     const handleOnPressObjective = (optionSelected: string) => {
@@ -19,7 +19,7 @@ const Objective: React.FC<ObjectiveProps> = ({navigation}) => {
     
     const handleOnPressSave = () => {
         dispatch(updateObjective(option))
-        dispatch(refreshSetting(settings.id, {...settings, objective: option}))
+        dispatch(refreshSetting(settings.id, {objective: option}))
         navigation.navigate("Settings")
     }
     

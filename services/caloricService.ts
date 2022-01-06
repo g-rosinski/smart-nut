@@ -37,7 +37,8 @@ export const calculateDailyKcal = (sex: 'f'|'m', age:number, weight:number, acti
         dailyKcal = age < 3? ((kcalValue.weightKcal * weight) - dailyKcal) : ((kcalValue.weightKcal * weight) + dailyKcal)
     }
     dailyKcal = activityValue? dailyKcal * activityValue : dailyKcal
-    return dailyKcal
+    return Math.round(dailyKcal * 100) / 100
+
 }
 
 export const getValueByExerciseLevel = (level:string):number | undefined => {

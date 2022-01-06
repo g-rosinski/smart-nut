@@ -9,13 +9,17 @@ import translate from '../../utils/translate';
 
 const PlanSettings: React.FC<any> = ({navigation}) => {
   const dispatch = useDispatch();
-  const settings = useSelector(state => state?.settings);
+  const { settings } = useSelector(state => state);
   useEffect(() => {
     dispatch(fetchSetting());
+    
+}, []);
+
+  useEffect(() => {
     if(!settings.id){
       dispatch(newSetting({}))
     }
-}, []);
+}, [settings.id]);
       
   return (
     <View style={styles.container}>
